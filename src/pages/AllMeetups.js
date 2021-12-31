@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MeetupList from "../components/meetups/MeetupList";
 
 // Used this dummy data to render something on the page before we added api
@@ -24,16 +24,33 @@ import MeetupList from "../components/meetups/MeetupList";
 function AllMeetupsPage() {
   // add a loading state
   const [isLoading, setIsLoading] = useState(true);
+  // for when we get the data back
   const [loadedMeetups, setLoadedMeetups] = useState([]);
-  fetch("https://meetup-react-app-b3f39-default-rtdb.firebaseio.com/meetups.json")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      // if there's data, set isLoading to false bc it's not in a loading state
-      setIsLoading(false);
-      setLoadedMeetups(data);
-    });
+
+  // useEffect needed to not create an infinite loop with fetch>state changes>rerender>fetch again>etc
+  useEffect(() => {
+    setIsLoading(true); // this is added just to be cleaner
+    fetch("https://meetup-react-app-b3f39-default-rtdb.firebaseio.com/meetups.json")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        // data from firebase is an object and we need an array so we transform the data after we receive it
+        const meetups = [];
+        // key = the keys from the object in Firebase
+        // for every meetup key in firebase:
+        for (const key in data) {
+          const meetup = {
+            id: key,
+            ...data[key]
+          };
+          meetups.push(meetup);
+        }
+        // if there's data, set isLoading to false bc it's not in a loading state
+        setIsLoading(false);
+        setLoadedMeetups(meetups);
+      });
+  }, []);
 
   if (isLoading) {
     return (
