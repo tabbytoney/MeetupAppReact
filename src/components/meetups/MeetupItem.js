@@ -1,7 +1,38 @@
+import { useContext } from "react";
 import classes from "./MeetupItem.module.css";
 import Card from "../ui/Card";
+import FavoritesContext from "../../store/favorites-context";
 
 function MeetupItem(props) {
+  // useContext connects this component with the FavoritesContext
+  const favoritesCtx = useContext(FavoritesContext);
+
+  // check is the item already favorited?
+  // itemIsFavorite is a key in the favies overall context object. Calling
+  // it this way gives us access to the ItemIsFavoriteHandler function
+  // props.id gives us the meetup id from the MeetupList(props) > MeetupItem object
+  // returns true or false
+  const itemIsFavorite = favoritesCtx.itemIsFavorite(props.id);
+
+  function toggleFavoritesStatusHandler() {
+    // if it's a favorite, unfavie. If it isn't, add it - create a
+    // new object with meetup details and pass it to AddFavorite and the handler.
+    // changes the state, which refigures all the values and displays an updated version
+    if (itemIsFavorite) {
+      favoritesCtx.removeFavorite(props.id);
+    } else {
+      favoritesCtx.addFavorite({
+        id: props.id,
+        title: props.title,
+        description: props.description,
+        image: props.image,
+        address: props.address
+      });
+    }
+  }
+
+  // Change button text depending on if already a favorite or not
+  // If a favie, Remove.., if not To Favorites
   return (
     <li className={classes.item}>
       <Card>
@@ -14,7 +45,9 @@ function MeetupItem(props) {
           <p>{props.description}</p>
         </div>
         <div className={classes.actions}>
-          <button>To Favorites</button>
+          <button onClick={toggleFavoritesStatusHandler}>
+            {itemIsFavorite ? "Remove from Favorites" : "To Favorites"}
+          </button>
         </div>
       </Card>
     </li>

@@ -3,10 +3,13 @@ import { createContext, useState } from "react";
 // the initial values are set here (starts at zero bc we dont have any Favies when creating the page)
 const FavoritesContext = createContext({
   favorites: [],
-  totalFavorites: 0
+  totalFavorites: 0,
+  addFavorite: (favoriteMeetup) => {},
+  removeFavorite: (meetupId) => {},
+  itemIsFavorite: (meetupId) => {}
 });
 
-function FavoritesContextProvider(props) {
+export function FavoritesContextProvider(props) {
   const [userFavorites, setUserFavorites] = useState([]);
 
   function addFavoritesHandler(favoriteMeetup) {
@@ -32,8 +35,13 @@ function FavoritesContextProvider(props) {
   // a context objext that holds the latest values
   const context = {
     favorites: userFavorites,
-    totalFavorites: userFavorites.length
+    totalFavorites: userFavorites.length,
+    addFavorite: addFavoritesHandler,
+    removeFavorite: removeFavoritesHandler,
+    itemIsFavorite: itemIsFavoriteHandler
   };
   // value={context} is where/how we pass the current context value
   return <FavoritesContext.Provider value={context}>{props.children}</FavoritesContext.Provider>;
 }
+
+export default FavoritesContext;
