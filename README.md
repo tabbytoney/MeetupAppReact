@@ -2,7 +2,7 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Note: this will no longer work as the dummy database I used has expired. 
+Note: this will no longer work as the dummy database I used has expired. I initially used Firebase
 
 ## Available Scripts
 
